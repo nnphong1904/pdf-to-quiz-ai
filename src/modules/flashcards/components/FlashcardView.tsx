@@ -23,8 +23,8 @@ export function FlashcardView({ flashcards, onNewPDF }: FlashcardViewProps) {
   const goToNext = () => {
     setIsFlipped(false);
     setCurrentIndex((prev) => {
-      const nextIndex = (prev + 1) % flashcards.length;
-      setProgress((nextIndex / flashcards.length) * 100);
+      const nextIndex = prev < flashcards.length - 1 ? prev + 1 : prev;
+      setProgress(((nextIndex + 1) / flashcards.length) * 100);
       return nextIndex;
     });
   };
@@ -32,7 +32,7 @@ export function FlashcardView({ flashcards, onNewPDF }: FlashcardViewProps) {
   const goToPrevious = () => {
     setIsFlipped(false);
     setCurrentIndex((prev) => {
-      const nextIndex = (prev - 1 + flashcards.length) % flashcards.length;
+      const nextIndex = prev > 0 ? prev - 1 : prev;
       setProgress((nextIndex / flashcards.length) * 100);
       return nextIndex;
     });
