@@ -46,3 +46,16 @@ export const fullQuizSchema = z.object({
 });
 
 export type FullQuiz = z.infer<typeof fullQuizSchema>;
+
+export const flashcardSchema = z.object({
+  front: z.string(),
+  back: z.string(),
+  topic: z.string(),
+  importance: z.enum(['High', 'Medium', 'Low']),
+});
+
+export const fullFlashcardsSchema = z.object({
+  flashcards: z.array(flashcardSchema),
+});
+
+export type FullFlashcards = z.infer<typeof fullFlashcardsSchema>;
