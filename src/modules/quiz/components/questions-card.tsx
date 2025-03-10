@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Check, X, Info } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Question } from "@/modules/quiz/schemas";
 
 type QuestionCardProps = {
@@ -34,30 +33,6 @@ export function QuestionCard({
           <h2 className="text-2xl font-semibold leading-tight">
             {question.question}
           </h2>
-        </div>
-        <div className="flex gap-2 flex-wrap">
-          {question.difficulty && (
-            <Badge
-              variant={
-                question.difficulty === "Easy"
-                  ? "outline"
-                  : question.difficulty === "Medium"
-                  ? "secondary"
-                  : "destructive"
-              }
-              className="px-4 py-1 text-sm"
-            >
-              {question.difficulty}
-            </Badge>
-          )}
-          {question.topic && (
-            <Badge
-              variant="outline"
-              className="px-4 py-1 text-sm bg-primary/5 border-primary/20"
-            >
-              {question.topic}
-            </Badge>
-          )}
         </div>
       </div>
 

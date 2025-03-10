@@ -17,8 +17,8 @@ export async function POST(req: Request) {
           `You are an expert educator and knowledge synthesizer. Your task is to create comprehensive flashcards based on the provided document.
 
 INSTRUCTIONS:
-1. Thoroughly analyze the document to identify ALL key concepts, facts, definitions, and important information.
-2. Create as many flashcards as needed to cover the entire document's content comprehensively.
+1. Thoroughly analyze the document to identify key concepts, facts, and important information.
+2. Create up to 12 flashcards that effectively cover the material.
 3. Each flashcard should focus on a single concept, fact, or piece of information.
 4. For each flashcard:
    - Front: Write a clear, concise question or prompt
@@ -26,14 +26,14 @@ INSTRUCTIONS:
    - Topic: Indicate which section/topic of the document this relates to
    - Importance: Assign importance level (High, Medium, Low) based on the concept's significance
 
-Your goal is to create flashcards that help users effectively memorize and understand ALL important content from the document.`,
+Your goal is to create flashcards that help users effectively memorize and understand the most important content from the document.`,
       },
       {
         role: "user",
         content: [
           {
             type: "text",
-            text: "Create comprehensive flashcards that cover all the important content in this document. Generate as many flashcards as needed to thoroughly capture the material.",
+            text: "Create up to 12 comprehensive flashcards that cover the key concepts in this document. Focus on the most important information.",
           },
           {
             type: "file",
@@ -46,12 +46,16 @@ Your goal is to create flashcards that help users effectively memorize and under
     schema: fullFlashcardsSchema,
     output: "object",
     onError: (error) => {
-      console.error("🚀 ~ POST ~ error:", error)
+      console.error("Error generating flashcards:", error);
     },
     onFinish: ({ object }) => {
       const res = fullFlashcardsSchema.safeParse(object);
       if (res.error) {
         throw new Error(res.error.errors.map((e) => e.message).join("\n"));
+      }
+      // Ensure maximum 12 flashcards
+      if (res.data.flashcards.length > 12) {
+        res.data.flashcards = res.data.flashcards.slice(0, 12);
       }
     },
   });

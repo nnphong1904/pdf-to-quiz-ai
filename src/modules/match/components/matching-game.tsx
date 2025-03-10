@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Trophy } from "lucide-react";
+import { Trophy, X } from "lucide-react";
 import { type MatchPair } from "@/modules/quiz/schemas";
 import { MatchBox, type MatchCard } from "./match-box";
 import { motion } from "framer-motion";
@@ -173,7 +173,15 @@ export function MatchingGame({ pairs, onNewPDF }: MatchingGameProps) {
                 exit={{ opacity: 0, y: -20 }}
                 className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4"
               >
-                <Card className="w-full max-w-md">
+                <Card className="w-full max-w-md relative">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-4 top-4 text-muted-foreground hover:text-foreground"
+                    onClick={resetGame}
+                  >
+                    <X className="h-5 w-5" />
+                  </Button>
                   <CardHeader className="text-center space-y-2">
                     <Trophy className="h-12 w-12 text-primary mx-auto" />
                     <CardTitle className="text-2xl">Congratulations!</CardTitle>

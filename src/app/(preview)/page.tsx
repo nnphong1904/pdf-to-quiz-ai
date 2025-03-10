@@ -16,7 +16,7 @@ import { FlashcardView } from "@/modules/flashcards/components/flashcard-view";
 import { MatchingGame } from "@/modules/match/components/matching-game";
 import { generateQuizTitle } from "./actions";
 import { AnimatePresence, motion } from "framer-motion";
-import { useQuizAndFlashcards } from "@/modules/quiz/hooks/useQuizAndFlashcards";
+import { useLearningMaterials } from "@/app/(preview)/_hooks/use-learning-materials";
 import { cn } from "@/lib/utils";
 
 type ViewMode = 'quiz' | 'flashcards' | 'match';
@@ -34,7 +34,7 @@ export default function ChatWithFiles() {
     error,
     generateContent,
     clearContent,
-  } = useQuizAndFlashcards();
+  } = useLearningMaterials();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);

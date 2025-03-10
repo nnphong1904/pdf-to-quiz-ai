@@ -3,7 +3,7 @@ import { experimental_useObject } from 'ai/react';
 import { type FullQuiz, type FullFlashcards, type FullMatch, fullQuizSchema, fullFlashcardsSchema, fullMatchSchema } from '@/modules/quiz/schemas';
 import { toast } from 'sonner';
 
-export function useQuizAndFlashcards() {
+export function useLearningMaterials() {
   const [error, setError] = useState<string | null>(null);
 
   const [quiz, setQuiz] = useState<FullQuiz | null>(null);
@@ -12,7 +12,6 @@ export function useQuizAndFlashcards() {
 
   const {
     submit: submitQuiz,
-    object: quizData,
     isLoading: isGeneratingQuiz,
   } = experimental_useObject({
     api: "/api/generate-quiz",
@@ -29,7 +28,6 @@ export function useQuizAndFlashcards() {
 
   const {
     submit: submitFlashcards,
-    object: flashcardsData,
     isLoading: isGeneratingFlashcards,
   } = experimental_useObject({
     api: "/api/generate-flashcards",
@@ -46,7 +44,6 @@ export function useQuizAndFlashcards() {
 
   const {
     submit: submitMatch,
-    object: matchData,
     isLoading: isGeneratingMatch,
   } = experimental_useObject({
     api: "/api/generate-match",

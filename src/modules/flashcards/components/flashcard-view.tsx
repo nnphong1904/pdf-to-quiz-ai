@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Trophy } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Trophy, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { type FullFlashcards } from '@/modules/quiz/schemas';
 import { cn } from '@/lib/utils';
@@ -180,7 +180,15 @@ export function FlashcardView({ flashcards, onNewPDF }: FlashcardViewProps) {
             exit={{ opacity: 0, y: -20 }}
             className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4"
           >
-            <Card className="w-full max-w-md">
+            <Card className="w-full max-w-md relative">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-4 top-4 text-muted-foreground hover:text-foreground"
+                onClick={resetFlashcards}
+              >
+                <X className="h-5 w-5" />
+              </Button>
               <CardHeader className="text-center space-y-2">
                 <Trophy className="h-12 w-12 text-primary mx-auto" />
                 <CardTitle className="text-2xl">Congratulations!</CardTitle>
