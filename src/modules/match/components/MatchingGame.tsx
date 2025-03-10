@@ -57,11 +57,15 @@ export function MatchingGame({ pairs, onNewPDF }: MatchingGameProps) {
   }, [pairs]);
 
   const handleCardClick = (cardId: number) => {
+
+    const card = Object.values(cards).find((card) => card.id === cardId);
+
     if (
       isChecking ||
-      cards[cardId].isMatched ||
+      card?.isMatched ||
       selectedCards.includes(cardId)
     ) {
+      console.log("🚀 ~ handleCardClick ~ cardId:", cardId)
       return;
     }
 
@@ -74,6 +78,8 @@ export function MatchingGame({ pairs, onNewPDF }: MatchingGameProps) {
       setMoves((prev) => prev + 1);
 
       const [firstCard, secondCard] = newSelectedCards.map((id) => cards[id]);
+      console.log("🚀 ~ handleCardClick ~ secondCard:", secondCard)
+      console.log("🚀 ~ handleCardClick ~ firstCard:", firstCard)
       const isMatch = firstCard.originalIndex === secondCard.originalIndex;
 
       setTimeout(() => {
@@ -127,9 +133,9 @@ export function MatchingGame({ pairs, onNewPDF }: MatchingGameProps) {
                 <motion.div
                   key={card.id}
                   initial={{ scale: 1 }}
-                  animate={{
-                    scale: card.isMatched ? 0 : 1,
-                  }}
+                  // animate={{
+                  //   scale: card.isMatched ? 0 : 1,
+                  // }}
                   exit={{ scale: 0 }}
                   transition={{ duration: 0.3 }}
                   className={cn(
@@ -141,13 +147,14 @@ export function MatchingGame({ pairs, onNewPDF }: MatchingGameProps) {
                   <Card
                     className={cn(
                       "w-full h-[250px] border-[3px] transition-colors overflow-hidden",
-                      selectedCards.includes(card.id) &&
+                      card.isMatched && "border-green-500 bg-green-50/50",
+                      selectedCards.includes(card.id) && !card.isMatched &&
                         "border-primary bg-primary/5",
                       selectedCards.length === 2 &&
                         selectedCards.includes(card.id) &&
                         !cards[selectedCards[0]].isMatched &&
+                        !card.isMatched &&
                         "border-red-500 animate-shake",
-                      card.isMatched && "border-green-500 bg-green-50/50",
                       !selectedCards.includes(card.id) &&
                         !card.isMatched &&
                         "border-muted-foreground/20 hover:border-primary/50"
