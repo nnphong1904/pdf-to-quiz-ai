@@ -59,6 +59,9 @@ export default function ChatWithFiles() {
   };
 
   const handleSubmitWithFiles = async (e: React.FormEvent<HTMLFormElement>) => {
+    if (files.length === 0) {
+      return;
+    }
     e.preventDefault();
     generateContent(files);
     await generateQuizTitle(files[0].name);

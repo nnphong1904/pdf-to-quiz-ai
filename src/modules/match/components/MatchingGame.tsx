@@ -1,25 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Trophy } from "lucide-react";
 import { type MatchPair } from "@/modules/quiz/schemas";
-import { cn } from "@/lib/utils";
+import { MatchBox, type MatchCard } from "./MatchBox";
+import { motion } from "framer-motion";
 
 interface MatchingGameProps {
   pairs: MatchPair[];
   onNewPDF?: () => void;
 }
-
-type MatchCard = {
-  id: number;
-  content: string;
-  isMatched: boolean;
-  type: "question" | "answer";
-  originalIndex: number;
-};
 
 export function MatchingGame({ pairs, onNewPDF }: MatchingGameProps) {
   const [cards, setCards] = useState<MatchCard[]>([]);
@@ -28,7 +21,6 @@ export function MatchingGame({ pairs, onNewPDF }: MatchingGameProps) {
   const [matchedPairs, setMatchedPairs] = useState(0);
   const [moves, setMoves] = useState(0);
   const [gameComplete, setGameComplete] = useState(false);
-
   const [matched, setIsMatched] = useState(false);
 
   // Initialize game
@@ -86,6 +78,11 @@ export function MatchingGame({ pairs, onNewPDF }: MatchingGameProps) {
         );
         setMatchedPairs((prev) => prev + 1);
         setIsMatched(true);
+
+        // Check if game is complete
+        if (matchedPairs + 1 === pairs.length) {
+          setGameComplete(true);
+        }
       }
 
       setTimeout(() => {
@@ -108,7 +105,7 @@ export function MatchingGame({ pairs, onNewPDF }: MatchingGameProps) {
   };
 
   return (
-    <div className="w-full  mx-auto py-8 px-4">
+    <div className="w-full mx-auto py-8 px-4">
       <Card className="w-full border-primary/20 shadow-lg">
         <CardContent className="p-6 space-y-6">
           <div className="flex justify-between items-center">
@@ -122,9 +119,7 @@ export function MatchingGame({ pairs, onNewPDF }: MatchingGameProps) {
             <AnimatePresence mode="wait">
               {cards.map((card) => {
                 const isSelected = selectedCards.includes(card.id);
-
                 const isNotSelected = !selectedCards.includes(card.id);
-
                 const isMatched =
                   selectedCards.length === 2 &&
                   matched &&
@@ -135,39 +130,15 @@ export function MatchingGame({ pairs, onNewPDF }: MatchingGameProps) {
                   selectedCards.includes(card.id);
 
                 return (
-                  <motion.div
+                  <MatchBox
                     key={card.id}
-                    initial={{ scale: 1 }}
-                    animate={{
-                      scale: card.isMatched ? 0 : 1,
-                    }}
-                    exit={{ scale: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className={cn(
-                      "cursor-pointer",
-                      card.isMatched && "pointer-events-none"
-                    )}
+                    card={card}
+                    isSelected={isSelected}
+                    isMatched={isMatched}
+                    isNotMatched={isNotMatched}
+                    isNotSelected={isNotSelected}
                     onClick={() => handleCardClick(card.id)}
-                  >
-                    <Card
-                      className={cn(
-                        "w-full h-[250px] border-[3px] transition-colors overflow-hidden",
-                        isSelected && "border-primary bg-primary/5",
-                        isMatched && "border-green-500 bg-green-50/50",
-                        isNotMatched && "border-red-500 animate-shake",
-                        isNotSelected &&
-                          "border-muted-foreground/20 hover:border-primary/50"
-                      )}
-                    >
-                      <CardContent className="p-6 flex flex-col justify-between h-full">
-                        <div className="flex flex-col items-center justify-center h-full w-full">
-                          <p className="text-base text-center break-words w-full max-h-full overflow-y-auto">
-                            {card.content}
-                          </p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
+                  />
                 );
               })}
             </AnimatePresence>
@@ -207,9 +178,7 @@ export function MatchingGame({ pairs, onNewPDF }: MatchingGameProps) {
                   </CardHeader>
                   <CardContent className="text-center space-y-4">
                     <p>You&apos;ve completed the matching game!</p>
-                    <p className="text-muted-foreground">
-                      Total moves: {moves}
-                    </p>
+                    <p className="text-muted-foreground">Total moves: {moves}</p>
                     <div className="flex justify-center gap-4 pt-4">
                       <Button
                         variant="outline"
