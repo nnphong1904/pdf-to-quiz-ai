@@ -1,5 +1,5 @@
 import { fullMatchSchema } from "@/modules/quiz/schemas";
-import { google } from "@ai-sdk/google";
+import { googleGemini } from "@/lib/model";
 import { streamObject } from "ai";
 
 export const maxDuration = 300; // 5 minutes for comprehensive processing
@@ -9,7 +9,7 @@ export async function POST(req: Request) {
   const firstFile = files[0].data;
 
   const result = streamObject({
-    model: google("gemini-1.5-flash"),
+    model: googleGemini,
     messages: [
       {
         role: "system",

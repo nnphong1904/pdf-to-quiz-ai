@@ -24,7 +24,7 @@ type ViewMode = 'quiz' | 'flashcards' | 'match';
 export default function ChatWithFiles() {
   const [files, setFiles] = useState<File[]>([]);
   const [isDragging, setIsDragging] = useState(false);
-  const [viewMode, setViewMode] = useState<ViewMode>('match');
+  const [viewMode, setViewMode] = useState<ViewMode>('quiz');
 
   const {
     quiz,
@@ -80,53 +80,65 @@ export default function ChatWithFiles() {
 
   if (quiz && flashcards && match) {
     return (
-      <div className="flex flex-col items-center justify-center w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-        <div className="w-full mb-6 flex justify-between items-center">
+      <div className="flex w-full min-h-[100dvh]">
+        {/* Left Sidebar */}
+        <div className="w-64 border-r border-primary/10 p-6 flex flex-col gap-6 bg-muted/30">
           <Button
             variant="ghost"
             onClick={clearPDF}
-            className="group flex items-center gap-2 text-muted-foreground hover:text-foreground"
+            className="group flex items-center gap-2 text-muted-foreground hover:text-foreground justify-start"
           >
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
             Back to Upload
           </Button>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              onClick={() => setViewMode('quiz')}
-              className={cn(
-                "gap-2 border-primary/20 hover:bg-primary/5",
-                viewMode === 'quiz' && "bg-primary/10"
-              )}
-            >
-              Quiz
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => setViewMode('flashcards')}
-              className={cn(
-                "gap-2 border-primary/20 hover:bg-primary/5",
-                viewMode === 'flashcards' && "bg-primary/10"
-              )}
-            >
-              Flashcards
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => setViewMode('match')}
-              className={cn(
-                "gap-2 border-primary/20 hover:bg-primary/5",
-                viewMode === 'match' && "bg-primary/10"
-              )}
-            >
-              Match
-            </Button>
+
+          <div className="space-y-2">
+            <div className="text-sm font-medium text-muted-foreground mb-3">View Mode</div>
+            <div className="flex flex-col gap-2">
+              <Button
+                variant="ghost"
+                onClick={() => setViewMode('quiz')}
+                className={cn(
+                  "justify-start gap-2",
+                  viewMode === 'quiz' && "bg-primary/10 text-primary hover:bg-primary/20"
+                )}
+              >
+                <Brain className="h-4 w-4" />
+                Quiz
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => setViewMode('flashcards')}
+                className={cn(
+                  "justify-start gap-2",
+                  viewMode === 'flashcards' && "bg-primary/10 text-primary hover:bg-primary/20"
+                )}
+              >
+                <BookOpen className="h-4 w-4" />
+                Flashcards
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => setViewMode('match')}
+                className={cn(
+                  "justify-start gap-2",
+                  viewMode === 'match' && "bg-primary/10 text-primary hover:bg-primary/20"
+                )}
+              >
+                <Sparkles className="h-4 w-4" />
+                Match
+              </Button>
+            </div>
           </div>
         </div>
-        <div className="w-full">
-          {viewMode === 'quiz' && <Quiz quiz={quiz} clearPDF={clearPDF} />}
-          {viewMode === 'flashcards' && <FlashcardView flashcards={flashcards.flashcards} onNewPDF={clearPDF} />}
-          {viewMode === 'match' && <MatchingGame pairs={match.pairs} onNewPDF={clearPDF} />}
+
+        {/* Main Content */}
+        <div className="flex-1 overflow-auto">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+            {viewMode === 'quiz' && <Quiz quiz={quiz} clearPDF={clearPDF} />}
+            {viewMode === 'flashcards' && <FlashcardView flashcards={flashcards.flashcards} onNewPDF={clearPDF} />}
+            {viewMode === 'match' && <MatchingGame pairs={match.pairs} onNewPDF={clearPDF} />}
+          </div>
         </div>
       </div>
     );
