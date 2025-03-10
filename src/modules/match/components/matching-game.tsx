@@ -1,13 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Trophy, X } from "lucide-react";
 import { type MatchPair } from "@/modules/quiz/schemas";
 import { MatchBox, type MatchCard } from "./match-box";
-import { motion } from "framer-motion";
 
 interface MatchingGameProps {
   pairs: MatchPair[];
@@ -107,19 +106,28 @@ export function MatchingGame({ pairs, onNewPDF }: MatchingGameProps) {
   };
 
   return (
-    <div className="w-full mx-auto py-8 px-4">
-      <Card className="w-full border-primary/20 shadow-lg">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="w-full mx-auto py-8 px-4"
+    >
+      <Card className="w-full border-primary/20 shadow-lg overflow-hidden">
         <CardContent className="p-6 space-y-6">
-          <div className="flex justify-between items-center">
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="flex justify-between items-center"
+          >
             <div className="text-sm font-medium">Moves: {moves}</div>
             <div className="text-sm font-medium">
               Matches: {matchedPairs} / {pairs.length}
             </div>
-          </div>
+          </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <AnimatePresence mode="wait">
-              {cards.map((card) => {
+              {cards.map((card, index) => {
                 const isSelected = selectedCards.includes(card.id);
                 const isNotSelected = !selectedCards.includes(card.id);
                 const isMatched =
@@ -132,21 +140,36 @@ export function MatchingGame({ pairs, onNewPDF }: MatchingGameProps) {
                   selectedCards.includes(card.id);
 
                 return (
-                  <MatchBox
+                  <motion.div
                     key={card.id}
-                    card={card}
-                    isSelected={isSelected}
-                    isMatched={isMatched}
-                    isNotMatched={isNotMatched}
-                    isNotSelected={isNotSelected}
-                    onClick={() => handleCardClick(card.id)}
-                  />
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ 
+                      duration: 0.3,
+                      delay: index * 0.05, // Stagger effect
+                    }}
+                  >
+                    <MatchBox
+                      card={card}
+                      isSelected={isSelected}
+                      isMatched={isMatched}
+                      isNotMatched={isNotMatched}
+                      isNotSelected={isNotSelected}
+                      onClick={() => handleCardClick(card.id)}
+                    />
+                  </motion.div>
                 );
               })}
             </AnimatePresence>
           </div>
 
-          <div className="flex justify-center gap-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="flex justify-center gap-4"
+          >
             <Button
               variant="outline"
               onClick={resetGame}
@@ -163,53 +186,84 @@ export function MatchingGame({ pairs, onNewPDF }: MatchingGameProps) {
                 Try Another PDF
               </Button>
             )}
-          </div>
+          </motion.div>
 
           <AnimatePresence>
             {gameComplete && (
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4"
               >
-                <Card className="w-full max-w-md relative">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-4 top-4 text-muted-foreground hover:text-foreground"
-                    onClick={resetGame}
-                  >
-                    <X className="h-5 w-5" />
-                  </Button>
-                  <CardHeader className="text-center space-y-2">
-                    <Trophy className="h-12 w-12 text-primary mx-auto" />
-                    <CardTitle className="text-2xl">Congratulations!</CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-center space-y-4">
-                    <p>You&apos;ve completed the matching game!</p>
-                    <p className="text-muted-foreground">Total moves: {moves}</p>
-                    <div className="flex justify-center gap-4 pt-4">
-                      <Button
-                        variant="outline"
-                        onClick={resetGame}
-                        className="px-6 py-4"
+                <motion.div
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 50 }}
+                  transition={{ type: "spring", damping: 20 }}
+                >
+                  <Card className="w-full max-w-md relative">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-4 top-4 text-muted-foreground hover:text-foreground"
+                      onClick={resetGame}
+                    >
+                      <X className="h-5 w-5" />
+                    </Button>
+                    <CardHeader className="text-center space-y-2">
+                      <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
                       >
-                        Play Again
-                      </Button>
-                      {onNewPDF && (
-                        <Button onClick={onNewPDF} className="px-6 py-4">
-                          Try Another PDF
+                        <Trophy className="h-12 w-12 text-primary mx-auto" />
+                      </motion.div>
+                      <CardTitle className="text-2xl">Congratulations!</CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-center space-y-4">
+                      <motion.p
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.3 }}
+                      >
+                        You&apos;ve completed the matching game!
+                      </motion.p>
+                      <motion.p
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.4 }}
+                        className="text-muted-foreground"
+                      >
+                        Total moves: {moves}
+                      </motion.p>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5 }}
+                        className="flex justify-center gap-4 pt-4"
+                      >
+                        <Button
+                          variant="outline"
+                          onClick={resetGame}
+                          className="px-6 py-4"
+                        >
+                          Play Again
                         </Button>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
+                        {onNewPDF && (
+                          <Button onClick={onNewPDF} className="px-6 py-4">
+                            Try Another PDF
+                          </Button>
+                        )}
+                      </motion.div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
               </motion.div>
             )}
           </AnimatePresence>
         </CardContent>
       </Card>
-    </div>
+    </motion.div>
   );
 }
