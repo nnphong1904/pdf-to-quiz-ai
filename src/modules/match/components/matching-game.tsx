@@ -15,6 +15,7 @@ interface MatchingGameProps {
 }
 
 export function MatchingGame({ pairs, onNewPDF }: MatchingGameProps) {
+  console.log("🚀 ~ MatchingGame ~ pairs:", pairs)
   const [cards, setCards] = useState<MatchCard[]>([]);
   const [selectedCards, setSelectedCards] = useState<number[]>([]);
   const [isChecking, setIsChecking] = useState(false);

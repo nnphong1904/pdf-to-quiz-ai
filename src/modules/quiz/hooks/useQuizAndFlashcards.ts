@@ -6,6 +6,10 @@ import { toast } from 'sonner';
 export function useQuizAndFlashcards() {
   const [error, setError] = useState<string | null>(null);
 
+  const [quiz, setQuiz] = useState<FullQuiz | null>(null);
+  const [flashcards, setFlashcards] = useState<FullFlashcards | null>(null);
+  const [match, setMatch] = useState<FullMatch | null>(null);
+
   const {
     submit: submitQuiz,
     object: quizData,
@@ -17,6 +21,9 @@ export function useQuizAndFlashcards() {
     onError: (err) => {
       setError('Failed to generate quiz: ' + err.message);
       toast.error('Failed to generate quiz. Please try again.');
+    },
+    onFinish: (params) => {
+      setQuiz(params.object ?? null);
     },
   });
 
@@ -32,6 +39,9 @@ export function useQuizAndFlashcards() {
       setError('Failed to generate flashcards: ' + err.message);
       toast.error('Failed to generate flashcards. Please try again.');
     },
+    onFinish: (params) => {
+      setFlashcards(params.object ?? null);
+    },
   });
 
   const {
@@ -45,6 +55,9 @@ export function useQuizAndFlashcards() {
     onError: (err) => {
       setError('Failed to generate match data: ' + err.message);
       toast.error('Failed to generate match data. Please try again.');
+    },
+    onFinish: (params) => {
+      setMatch(params.object ?? null);
     },
   });
 
@@ -82,9 +95,9 @@ export function useQuizAndFlashcards() {
   }, [submitQuiz, submitFlashcards, submitMatch]);
 
   return {
-    quiz: quizData as FullQuiz | null,
-    flashcards: flashcardsData as FullFlashcards | null,
-    match: matchData as FullMatch | null,
+    quiz,
+    flashcards,
+    match,
     isGenerating: isGeneratingQuiz || isGeneratingFlashcards || isGeneratingMatch,
     error,
     generateContent,

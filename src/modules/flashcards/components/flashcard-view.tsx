@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Trophy } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { type FullFlashcards } from '@/modules/quiz/schemas';
 import { cn } from '@/lib/utils';
@@ -18,6 +18,7 @@ export function FlashcardView({ flashcards, onNewPDF }: FlashcardViewProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [showCompletion, setShowCompletion] = useState(false);
 
   const currentCard = flashcards[currentIndex];
 
@@ -25,7 +26,14 @@ export function FlashcardView({ flashcards, onNewPDF }: FlashcardViewProps) {
     setIsFlipped(false);
     setCurrentIndex((prev) => {
       const nextIndex = prev < flashcards.length - 1 ? prev + 1 : prev;
-      setProgress(((nextIndex + 1) / flashcards.length) * 100);
+      const newProgress = ((nextIndex + 1) / flashcards.length) * 100;
+      setProgress(newProgress);
+      
+      // Show completion popup when reaching 100%
+      if (newProgress === 100) {
+        setShowCompletion(true);
+      }
+      
       return nextIndex;
     });
   };
@@ -37,6 +45,13 @@ export function FlashcardView({ flashcards, onNewPDF }: FlashcardViewProps) {
       setProgress((nextIndex / flashcards.length) * 100);
       return nextIndex;
     });
+  };
+
+  const resetFlashcards = () => {
+    setCurrentIndex(0);
+    setProgress(0);
+    setIsFlipped(false);
+    setShowCompletion(false);
   };
 
   const importanceColors = {
@@ -156,6 +171,44 @@ export function FlashcardView({ flashcards, onNewPDF }: FlashcardViewProps) {
           )}
         </CardContent>
       </Card>
+
+      <AnimatePresence>
+        {showCompletion && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4"
+          >
+            <Card className="w-full max-w-md">
+              <CardHeader className="text-center space-y-2">
+                <Trophy className="h-12 w-12 text-primary mx-auto" />
+                <CardTitle className="text-2xl">Congratulations!</CardTitle>
+              </CardHeader>
+              <CardContent className="text-center space-y-4">
+                <p>You&apos;ve completed all the flashcards!</p>
+                <p className="text-muted-foreground">
+                  You&apos;ve reviewed {flashcards.length} cards
+                </p>
+                <div className="flex justify-center gap-4 pt-4">
+                  <Button
+                    variant="outline"
+                    onClick={resetFlashcards}
+                    className="px-6 py-4"
+                  >
+                    Review Again
+                  </Button>
+                  {onNewPDF && (
+                    <Button onClick={onNewPDF} className="px-6 py-4">
+                      Try Another PDF
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 } 
