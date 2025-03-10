@@ -13,14 +13,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "@/components/ui/card";
 import Quiz from "@/modules/quiz/components/quiz";
-import { Link } from "@/components/ui/link";
-import NextLink from "next/link";
 import { generateQuizTitle } from "./actions";
 import { AnimatePresence, motion } from "framer-motion";
-import { VercelIcon, GitIcon } from "@/components/icons";
 
 export default function ChatWithFiles() {
   const [files, setFiles] = useState<File[]>([]);
@@ -101,15 +97,15 @@ export default function ChatWithFiles() {
 
     // If we have questions, calculate based on how many we have vs total expected
     if (partialQuiz.questions && Array.isArray(partialQuiz.questions)) {
-      const totalExpected = partialQuiz.metadata?.totalQuestions || 10; // Default to 10 if not specified
+      const totalExpected = partialQuiz.metadata?.totalQuestions || 6; // Default to 10 if not specified
       return (partialQuiz.questions.length / totalExpected) * 100;
     }
 
     // If we have metadata but no questions yet, we're about 20% done
-    if (partialQuiz.metadata) return 20;
+    if (partialQuiz.metadata) return 5
 
     // Otherwise, just show a small amount of progress
-    return 10;
+    return 1;
   };
 
   const progress = calculateProgress();
@@ -191,9 +187,8 @@ export default function ChatWithFiles() {
           <span>PDF Quiz Generator</span>
         </div>
         <p className="text-base text-muted-foreground max-w-xl mx-auto px-4">
-          Transform any PDF document into an interactive quiz powered by AI.
-          Upload your document and let our system generate comprehensive
-          questions to test understanding.
+          Turn any PDF into an AI-powered interactive quiz. Upload your document 
+          and get questions that test comprehension.
         </p>
       </motion.div>
 
@@ -214,20 +209,12 @@ export default function ChatWithFiles() {
           </div>
           <div className="space-y-1.5">
             <CardTitle className="text-xl">Create Your Quiz</CardTitle>
-            <CardDescription className="text-sm max-w-md mx-auto">
-              Upload a PDF to generate an interactive quiz based on its content
-              using <Link href="https://sdk.vercel.ai">AI SDK</Link> and{" "}
-              <Link href="https://sdk.vercel.ai/providers/ai-sdk-providers/google-generative-ai">
-                Gemini Pro
-              </Link>
-              .
-            </CardDescription>
           </div>
         </CardHeader>
         <CardContent className="p-6">
           <form onSubmit={handleSubmitWithFiles} className="space-y-4">
             <div
-              className={`relative flex flex-col items-center justify-center border-2 ${
+              className={`relative flex flex-col items-center justify-center border-2 h-48 ${
                 files.length > 0
                   ? "border-primary border-dashed bg-primary/5"
                   : "border-dashed border-muted-foreground/25"
@@ -303,30 +290,6 @@ export default function ChatWithFiles() {
         )}
       </Card>
 
-      <motion.div
-        className="flex flex-row gap-4 items-center justify-center mt-8"
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.4 }}
-      >
-        <NextLink
-          target="_blank"
-          href="https://github.com/vercel-labs/ai-sdk-preview-pdf-support"
-          className="flex flex-row gap-1.5 items-center border border-primary/20 px-3 py-1.5 rounded-lg hover:bg-primary/5 text-xs sm:text-sm transition-colors"
-        >
-          <GitIcon />
-          View Source Code
-        </NextLink>
-
-        <NextLink
-          target="_blank"
-          href="https://vercel.com/templates/next.js/ai-quiz-generator"
-          className="flex flex-row gap-1.5 items-center bg-primary px-3 py-1.5 rounded-lg text-primary-foreground hover:bg-primary/90 text-xs sm:text-sm transition-colors"
-        >
-          <VercelIcon size={14} />
-          Deploy with Vercel
-        </NextLink>
-      </motion.div>
     </div>
   );
 }
