@@ -5,7 +5,7 @@ import { useState } from "react";
 import { experimental_useObject } from "ai/react";
 import { FullQuiz, fullQuizSchema } from "@/modules/quiz/schemas";
 import { toast } from "sonner";
-import { FileUp, Plus, Loader2, BookOpen, Brain, Sparkles } from "lucide-react";
+import { FileUp, Plus, Loader2, BookOpen, Brain, Sparkles, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,7 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Quiz from "@/modules/quiz/components/quiz";
+import { Quiz } from "@/modules/quiz/components/quiz";
 import { generateQuizTitle } from "./actions";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -131,7 +131,17 @@ export default function ChatWithFiles() {
 
   if (quiz) {
     return (
-      <div className="flex flex-col items-center justify-center  px-3 sm:px-4 py-8">
+      <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto px-3 sm:px-4 py-8">
+        <div className="w-full mb-4">
+          <Button
+            variant="ghost"
+            onClick={clearPDF}
+            className="group flex items-center gap-2 text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+            Back to Upload
+          </Button>
+        </div>
         <Quiz quiz={quiz} clearPDF={clearPDF} />
       </div>
     );
