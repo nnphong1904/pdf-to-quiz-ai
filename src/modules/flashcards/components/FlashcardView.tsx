@@ -4,9 +4,10 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Rotate3D, Brain } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Brain } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { type FullFlashcards } from '@/modules/quiz/schemas';
+import { cn } from '@/lib/utils';
 
 interface FlashcardViewProps {
   flashcards: FullFlashcards['flashcards'];
@@ -71,46 +72,61 @@ export function FlashcardView({ flashcards, onNewPDF }: FlashcardViewProps) {
             />
           </div>
 
-          <div className="relative min-h-[300px] w-full">
+          <div className="relative min-h-[300px] w-full [perspective:1000px]">
             <AnimatePresence mode="wait">
               <motion.div
-                key={currentIndex + (isFlipped ? '-flipped' : '')}
+                key={currentIndex}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.4 }}
-                className="w-full"
-                style={{ perspective: 1000 }}
+                className="relative w-full h-full"
               >
-                <Card 
-                  className="w-full min-h-[300px] cursor-pointer relative"
-                  onClick={() => setIsFlipped(!isFlipped)}
+                <div 
+                  className={cn(
+                    "relative w-full h-full duration-500 [transform-style:preserve-3d]",
+                    isFlipped ? "[transform:rotateY(180deg)]" : ""
+                  )}
                 >
-                  <CardContent className="p-6 flex flex-col items-center justify-center min-h-[300px]">
-                    <div className="absolute top-4 right-4 flex gap-2">
-                      <Badge variant="secondary">{currentCard.topic}</Badge>
-                      <Badge className={importanceColors[currentCard.importance]}>
-                        {currentCard.importance}
-                      </Badge>
-                    </div>
-                    <div className="text-center mt-8">
-                      <p className="text-lg">
-                        {isFlipped ? currentCard.back : currentCard.front}
-                      </p>
-                    </div>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="absolute bottom-4 right-4"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsFlipped(!isFlipped);
-                      }}
-                    >
-                      <Rotate3D className="h-4 w-4" />
-                    </Button>
-                  </CardContent>
-                </Card>
+                  {/* Front of card */}
+                  <div 
+                    className="absolute w-full h-full [backface-visibility:hidden]"
+                    onClick={() => setIsFlipped(true)}
+                  >
+                    <Card className="w-full min-h-[300px] cursor-pointer">
+                      <CardContent className="p-6 flex flex-col items-center justify-center min-h-[300px]">
+                        <div className="absolute top-4 right-4 flex gap-2">
+                          <Badge variant="secondary">{currentCard.topic}</Badge>
+                          <Badge className={importanceColors[currentCard.importance]}>
+                            {currentCard.importance}
+                          </Badge>
+                        </div>
+                        <div className="text-center mt-8">
+                          <p className="text-lg">{currentCard.front}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Back of card */}
+                  <div 
+                    className="absolute w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)]"
+                    onClick={() => setIsFlipped(false)}
+                  >
+                    <Card className="w-full min-h-[300px] cursor-pointer">
+                      <CardContent className="p-6 flex flex-col items-center justify-center min-h-[300px]">
+                        <div className="absolute top-4 right-4 flex gap-2">
+                          <Badge variant="secondary">{currentCard.topic}</Badge>
+                          <Badge className={importanceColors[currentCard.importance]}>
+                            {currentCard.importance}
+                          </Badge>
+                        </div>
+                        <div className="text-center mt-8">
+                          <p className="text-lg">{currentCard.back}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
               </motion.div>
             </AnimatePresence>
           </div>
@@ -119,6 +135,7 @@ export function FlashcardView({ flashcards, onNewPDF }: FlashcardViewProps) {
             <Button
               variant="outline"
               onClick={goToPrevious}
+              disabled={currentIndex === 0}
               className="px-4 sm:px-6 py-4 sm:py-5 text-base gap-2 border-primary/20 hover:bg-primary/5 transition-colors"
             >
               <ChevronLeft className="h-4 w-4" />
@@ -126,6 +143,7 @@ export function FlashcardView({ flashcards, onNewPDF }: FlashcardViewProps) {
             </Button>
             <Button
               onClick={goToNext}
+              disabled={currentIndex === flashcards.length - 1}
               className="px-4 sm:px-6 py-4 sm:py-5 text-base gap-2 bg-primary hover:bg-primary/90 transition-colors"
             >
               Next
