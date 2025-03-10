@@ -13,18 +13,23 @@ import {
 } from "@/components/ui/card";
 import { Quiz } from "@/modules/quiz/components/quiz";
 import { FlashcardView } from "@/modules/flashcards/components/FlashcardView";
+import { MatchingGame } from "@/modules/match/components/MatchingGame";
 import { generateQuizTitle } from "./actions";
 import { AnimatePresence, motion } from "framer-motion";
 import { useQuizAndFlashcards } from "@/modules/quiz/hooks/useQuizAndFlashcards";
+import { cn } from "@/lib/utils";
+
+type ViewMode = 'quiz' | 'flashcards' | 'match';
 
 export default function ChatWithFiles() {
   const [files, setFiles] = useState<File[]>([]);
   const [isDragging, setIsDragging] = useState(false);
-  const [showFlashcards, setShowFlashcards] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>('match');
 
   const {
     quiz,
     flashcards,
+    match,
     isGenerating,
     error,
     generateContent,
@@ -62,7 +67,7 @@ export default function ChatWithFiles() {
   const clearPDF = () => {
     setFiles([]);
     clearContent();
-    setShowFlashcards(false);
+    setViewMode('quiz');
   };
 
   // Show error toast if there's an error
@@ -70,10 +75,10 @@ export default function ChatWithFiles() {
     toast.error(error);
   }
 
-  if (quiz && flashcards) {
+  if (quiz && flashcards && match) {
     return (
-      <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto px-3 sm:px-4 py-8">
-        <div className="w-full mb-4 flex justify-between items-center">
+      <div className="flex flex-col items-center justify-center w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full mb-6 flex justify-between items-center">
           <Button
             variant="ghost"
             onClick={clearPDF}
@@ -82,19 +87,44 @@ export default function ChatWithFiles() {
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
             Back to Upload
           </Button>
-          <Button
-            variant="outline"
-            onClick={() => setShowFlashcards(!showFlashcards)}
-            className="gap-2 border-primary/20 hover:bg-primary/5"
-          >
-            {showFlashcards ? "View Quiz" : "View Flashcards"}
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setViewMode('quiz')}
+              className={cn(
+                "gap-2 border-primary/20 hover:bg-primary/5",
+                viewMode === 'quiz' && "bg-primary/10"
+              )}
+            >
+              Quiz
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setViewMode('flashcards')}
+              className={cn(
+                "gap-2 border-primary/20 hover:bg-primary/5",
+                viewMode === 'flashcards' && "bg-primary/10"
+              )}
+            >
+              Flashcards
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setViewMode('match')}
+              className={cn(
+                "gap-2 border-primary/20 hover:bg-primary/5",
+                viewMode === 'match' && "bg-primary/10"
+              )}
+            >
+              Match
+            </Button>
+          </div>
         </div>
-        {showFlashcards ? (
-          <FlashcardView flashcards={flashcards.flashcards} onNewPDF={clearPDF} />
-        ) : (
-          <Quiz quiz={quiz} clearPDF={clearPDF} />
-        )}
+        <div className="w-full">
+          {viewMode === 'quiz' && <Quiz quiz={quiz} clearPDF={clearPDF} />}
+          {viewMode === 'flashcards' && <FlashcardView flashcards={flashcards.flashcards} onNewPDF={clearPDF} />}
+          {viewMode === 'match' && <MatchingGame pairs={match.pairs} onNewPDF={clearPDF} />}
+        </div>
       </div>
     );
   }
@@ -146,11 +176,11 @@ export default function ChatWithFiles() {
           <div className="p-2 rounded-xl bg-primary/10">
             <BookOpen className="h-7 w-7 text-primary" />
           </div>
-          <span>PDF Quiz Generator</span>
+          <span>PDF Learning Tools</span>
         </div>
         <p className="text-base text-muted-foreground max-w-xl mx-auto px-4">
-          Turn any PDF into an AI-powered interactive quiz and flashcards. Upload your document
-          and get questions that test comprehension.
+          Turn any PDF into interactive learning tools: quiz, flashcards, and matching game.
+          Upload your document to get started.
         </p>
       </motion.div>
 
@@ -170,9 +200,9 @@ export default function ChatWithFiles() {
             </div>
           </div>
           <div className="space-y-1.5">
-            <CardTitle className="text-xl">Create Your Quiz & Flashcards</CardTitle>
+            <CardTitle className="text-xl">Create Learning Materials</CardTitle>
             <p className="text-sm text-muted-foreground">
-              Upload a PDF to generate an interactive quiz and flashcards with AI
+              Upload a PDF to generate an interactive quiz, flashcards, and matching game
             </p>
           </div>
         </CardHeader>
@@ -220,7 +250,7 @@ export default function ChatWithFiles() {
                   <span>Generating Content...</span>
                 </span>
               ) : (
-                "Generate Quiz & Flashcards"
+                "Generate Learning Materials"
               )}
             </Button>
           </form>

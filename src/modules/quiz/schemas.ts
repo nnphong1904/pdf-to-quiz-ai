@@ -59,3 +59,16 @@ export const fullFlashcardsSchema = z.object({
 });
 
 export type FullFlashcards = z.infer<typeof fullFlashcardsSchema>;
+
+export const matchPairSchema = z.object({
+  question: z.string(),
+  answer: z.string(),
+  topic: z.string(),
+});
+
+export const fullMatchSchema = z.object({
+  pairs: z.array(matchPairSchema).max(8),
+});
+
+export type MatchPair = z.infer<typeof matchPairSchema>;
+export type FullMatch = z.infer<typeof fullMatchSchema>;

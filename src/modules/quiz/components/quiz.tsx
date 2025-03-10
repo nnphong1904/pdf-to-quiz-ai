@@ -6,7 +6,6 @@ import QuizScore from "./score";
 import QuizReview from "./quiz-overview";
 import { FullQuiz } from "@/modules/quiz/schemas";
 import { QuestionCard } from "./questions-card";
-import { QuizMetadataCard } from "./quiz-metadata-card";
 
 type QuizProps = {
   quiz: FullQuiz;
@@ -14,7 +13,7 @@ type QuizProps = {
 };
 
 export function Quiz({ quiz, clearPDF }: QuizProps) {
-  const { metadata, questions } = quiz;
+  const { questions } = quiz;
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<string[]>(
     Array(questions.length).fill(null)
@@ -116,8 +115,6 @@ export function Quiz({ quiz, clearPDF }: QuizProps) {
 
   return (
     <div className="py-4 sm:px-4 min-h-screen">
-      <QuizMetadataCard metadata={metadata} />
-
       <div className="flex justify-between items-center mb-3 text-sm sm:text-base">
         <span className="font-medium">
           Question {currentQuestionIndex + 1} of {questions.length}

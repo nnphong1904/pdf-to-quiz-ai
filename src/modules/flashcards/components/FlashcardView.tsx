@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Brain } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { type FullFlashcards } from '@/modules/quiz/schemas';
 import { cn } from '@/lib/utils';
@@ -48,14 +48,6 @@ export function FlashcardView({ flashcards, onNewPDF }: FlashcardViewProps) {
   return (
     <div className="w-full max-w-4xl mx-auto py-8 px-4">
       <Card className="w-full border-primary/20 shadow-lg">
-        <CardHeader className="pb-2 text-center bg-primary/5 border-b border-primary/10">
-          <div className="flex items-center justify-center gap-3">
-            <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10">
-              <Brain className="h-5 w-5 text-primary" />
-            </div>
-            <CardTitle className="text-2xl font-bold">Flashcards</CardTitle>
-          </div>
-        </CardHeader>
         <CardContent className="p-6 space-y-6">
           <div className="flex justify-between items-center text-sm">
             <span className="font-medium">
