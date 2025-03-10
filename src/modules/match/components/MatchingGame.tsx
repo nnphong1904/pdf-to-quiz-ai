@@ -85,11 +85,12 @@ export function MatchingGame({ pairs, onNewPDF }: MatchingGameProps) {
         }
       }
 
-      setTimeout(() => {
+      const timeout = setTimeout(() => {
         setIsMatched(false);
         setSelectedCards([]);
         setIsChecking(false);
-      }, 1000);
+        clearTimeout(timeout);
+      }, 300);
     }
   };
 
