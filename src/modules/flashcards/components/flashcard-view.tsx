@@ -150,7 +150,7 @@ export function FlashcardView({ flashcards, onNewPDF }: FlashcardViewProps) {
 
                   {/* Back of card */}
                   <div 
-                    className="absolute w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)]"
+                    className="absolute w-full h-full min-h-[300px] [backface-visibility:hidden] [transform:rotateY(180deg)]"
                     onClick={() => setIsFlipped(false)}
                   >
                     <Card className="w-full h-full cursor-pointer bg-card border rounded-xl p-6 shadow-lg border-primary/20">

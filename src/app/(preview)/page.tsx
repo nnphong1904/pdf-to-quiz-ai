@@ -80,60 +80,59 @@ export default function ChatWithFiles() {
 
   if (quiz && flashcards && match) {
     return (
-      <div className="flex w-full min-h-[100dvh]">
-        {/* Left Sidebar */}
-        <div className="w-64 border-r border-primary/10 p-6 flex flex-col gap-6 bg-muted/30">
+      <div className="flex flex-col-reverse sm:flex-row w-full min-h-[100dvh]">
+        {/* Left Sidebar - converts to bottom bar on mobile */}
+        <div className="w-full sm:w-64 border-t sm:border-t-0 sm:border-r border-primary/10 p-4 sm:p-6 flex flex-row sm:flex-col gap-4 sm:gap-6 bg-muted/30 fixed bottom-0 sm:static left-0">
           <Button
             variant="ghost"
             onClick={clearPDF}
-            className="group flex items-center gap-2 text-muted-foreground hover:text-foreground justify-start"
+            className="group flex items-center gap-2 text-muted-foreground hover:text-foreground justify-start flex-1 sm:flex-none"
           >
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-            Back to Upload
+            <span className="hidden sm:inline">Back to Upload</span>
+            <span className="sm:hidden">Back</span>
           </Button>
 
-          <div className="space-y-2">
-            <div className="text-sm font-medium text-muted-foreground mb-3">View Mode</div>
-            <div className="flex flex-col gap-2">
-              <Button
-                variant="ghost"
-                onClick={() => setViewMode('quiz')}
-                className={cn(
-                  "justify-start gap-2",
-                  viewMode === 'quiz' && "bg-primary/10 text-primary hover:bg-primary/20"
-                )}
-              >
-                <Brain className="h-4 w-4" />
-                Quiz
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => setViewMode('flashcards')}
-                className={cn(
-                  "justify-start gap-2",
-                  viewMode === 'flashcards' && "bg-primary/10 text-primary hover:bg-primary/20"
-                )}
-              >
-                <BookOpen className="h-4 w-4" />
-                Flashcards
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => setViewMode('match')}
-                className={cn(
-                  "justify-start gap-2",
-                  viewMode === 'match' && "bg-primary/10 text-primary hover:bg-primary/20"
-                )}
-              >
-                <Sparkles className="h-4 w-4" />
-                Match
-              </Button>
-            </div>
+          <div className="flex flex-row sm:flex-col gap-2 flex-1">
+            <div className="text-sm font-medium text-muted-foreground mb-0 sm:mb-3 hidden sm:block">View Mode</div>
+            <Button
+              variant="ghost"
+              onClick={() => setViewMode('quiz')}
+              className={cn(
+                "justify-start gap-2 flex-1 sm:flex-none",
+                viewMode === 'quiz' && "bg-primary/10 text-primary hover:bg-primary/20"
+              )}
+            >
+              <Brain className="h-4 w-4" />
+              <span className="hidden sm:inline">Quiz</span>
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => setViewMode('flashcards')}
+              className={cn(
+                "justify-start gap-2 flex-1 sm:flex-none",
+                viewMode === 'flashcards' && "bg-primary/10 text-primary hover:bg-primary/20"
+              )}
+            >
+              <BookOpen className="h-4 w-4" />
+              <span className="hidden sm:inline">Flashcards</span>
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => setViewMode('match')}
+              className={cn(
+                "justify-start gap-2 flex-1 sm:flex-none",
+                viewMode === 'match' && "bg-primary/10 text-primary hover:bg-primary/20"
+              )}
+            >
+              <Sparkles className="h-4 w-4" />
+              <span className="hidden sm:inline">Match</span>
+            </Button>
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="flex-1 overflow-auto">
+        {/* Main Content - Add padding bottom on mobile for the bottom bar */}
+        <div className="flex-1 overflow-auto pb-24 sm:pb-0">
           <div className="mx-auto px-4 sm:px-6 lg:px-8 pt-6 max-w-7xl">
             {viewMode === 'quiz' && <Quiz quiz={quiz} clearPDF={clearPDF} />}
             {viewMode === 'flashcards' && <FlashcardView flashcards={flashcards.flashcards} onNewPDF={clearPDF} />}
