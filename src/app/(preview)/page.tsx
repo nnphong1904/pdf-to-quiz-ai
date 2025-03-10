@@ -102,7 +102,7 @@ export default function ChatWithFiles() {
     }
 
     // If we have metadata but no questions yet, we're about 20% done
-    if (partialQuiz.metadata) return 5
+    if (partialQuiz.metadata) return 5;
 
     // Otherwise, just show a small amount of progress
     return 1;
@@ -187,7 +187,7 @@ export default function ChatWithFiles() {
           <span>PDF Quiz Generator</span>
         </div>
         <p className="text-base text-muted-foreground max-w-xl mx-auto px-4">
-          Turn any PDF into an AI-powered interactive quiz. Upload your document 
+          Turn any PDF into an AI-powered interactive quiz. Upload your document
           and get questions that test comprehension.
         </p>
       </motion.div>
@@ -209,6 +209,9 @@ export default function ChatWithFiles() {
           </div>
           <div className="space-y-1.5">
             <CardTitle className="text-xl">Create Your Quiz</CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Upload a PDF to generate an interactive quiz with AI
+            </p>
           </div>
         </CardHeader>
         <CardContent className="p-6">
@@ -260,36 +263,44 @@ export default function ChatWithFiles() {
             </Button>
           </form>
         </CardContent>
-        {isLoading && (
-          <CardFooter className="flex flex-col space-y-4 pt-0 pb-6 px-6">
-            <div className="w-full space-y-2">
-              <div className="flex justify-between text-sm font-medium">
-                <span>Generation Progress</span>
-                <span>{Math.round(progress)}%</span>
-              </div>
-              <div className="h-2 bg-muted rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full bg-primary"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progress}%` }}
-                  transition={{ duration: 0.5 }}
-                />
-              </div>
-            </div>
-            <div className="w-full p-3 bg-muted/50 rounded-lg border border-primary/10">
-              <div className="flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                <span className="text-sm">
-                  {partialQuiz?.questions
-                    ? `Creating question ${getCurrentQuestionNumber()} of ${getTotalExpectedQuestions()}`
-                    : "Analyzing document content..."}
-                </span>
-              </div>
-            </div>
-          </CardFooter>
-        )}
+        <AnimatePresence>
+          {isLoading ? (
+            <motion.div
+              initial={{ opacity: 0, height: 0, y: -20 }}
+              animate={{ opacity: 1, height: "auto", y: 0, transition: { opacity: { duration: 0.5 } } }}
+              exit={{ opacity: 0, height: 0, transition: { opacity: { duration: 0.1 } } }}
+              transition={{ duration: 0.2 }}
+            >
+              <CardFooter className="flex flex-col space-y-4 pt-0 pb-6 px-6">
+                <div className="w-full space-y-2">
+                  <div className="flex justify-between text-sm font-medium">
+                    <span>Generation Progress</span>
+                    <span>{Math.round(progress)}%</span>
+                  </div>
+                  <div className="h-2 bg-muted rounded-full overflow-hidden">
+                    <motion.div
+                      className="h-full bg-primary"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${progress}%` }}
+                      transition={{ duration: 0.5 }}
+                    />
+                  </div>
+                </div>
+                <div className="w-full p-3 bg-muted/50 rounded-lg border border-primary/10">
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                    <span className="text-sm">
+                      {partialQuiz?.questions
+                        ? `Creating question ${getCurrentQuestionNumber()} of ${getTotalExpectedQuestions()}`
+                        : "Analyzing document content..."}
+                    </span>
+                  </div>
+                </div>
+              </CardFooter>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
       </Card>
-
     </div>
   );
 }
