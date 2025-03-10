@@ -67,7 +67,11 @@ export function FlashcardView({ flashcards, onNewPDF }: FlashcardViewProps) {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto py-8 px-4">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="w-full mx-auto py-8 px-4"
+    >
       {showConfetti && (
         <div className="fixed inset-0 z-[60] pointer-events-none">
           <ReactConfetti
@@ -79,30 +83,43 @@ export function FlashcardView({ flashcards, onNewPDF }: FlashcardViewProps) {
           />
         </div>
       )}
-      <Card className="w-full border-primary/20 shadow-lg">
+
+      <Card className="w-full border-primary/20 shadow-lg overflow-hidden">
         <CardContent className="p-6 space-y-6">
-          <div className="flex justify-between items-center text-sm">
-            <span className="font-medium">
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="flex justify-between items-center"
+          >
+            <span className="text-sm font-medium">
               Card {currentIndex + 1} of {flashcards.length}
             </span>
-            <span className="font-medium">{Math.round(progress)}% Complete</span>
-          </div>
-          <div className="h-2 bg-muted rounded-full overflow-hidden">
+            <span className="text-sm font-medium">{Math.round(progress)}% Complete</span>
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="h-2 bg-muted rounded-full overflow-hidden"
+          >
             <motion.div
               className="h-full bg-primary"
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.5 }}
             />
-          </div>
+          </motion.div>
 
-          <div className="relative min-h-[300px] w-full [perspective:1000px]">
+          <div className="relative min-h-[400px] w-full [perspective:1000px]">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
                 className="relative w-full h-full"
               >
                 <div 
@@ -113,11 +130,11 @@ export function FlashcardView({ flashcards, onNewPDF }: FlashcardViewProps) {
                 >
                   {/* Front of card */}
                   <div 
-                    className="absolute w-full h-full [backface-visibility:hidden]"
+                    className="absolute w-full h-full min-h-[300px] [backface-visibility:hidden]"
                     onClick={() => setIsFlipped(true)}
                   >
-                    <Card className="w-full min-h-[300px] cursor-pointer">
-                      <CardContent className="p-6 flex flex-col items-center justify-center min-h-[300px]">
+                    <Card className="w-full h-full cursor-pointer bg-card border rounded-xl p-6 shadow-lg border-primary/20">
+                      <CardContent className="p-0 flex flex-col items-center justify-center h-full">
                         <div className="absolute top-4 right-4 flex gap-2">
                           <Badge variant="secondary">{currentCard.topic}</Badge>
                           <Badge className={importanceColors[currentCard.importance]}>
@@ -136,8 +153,8 @@ export function FlashcardView({ flashcards, onNewPDF }: FlashcardViewProps) {
                     className="absolute w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)]"
                     onClick={() => setIsFlipped(false)}
                   >
-                    <Card className="w-full min-h-[300px] cursor-pointer">
-                      <CardContent className="p-6 flex flex-col items-center justify-center min-h-[300px]">
+                    <Card className="w-full h-full cursor-pointer bg-card border rounded-xl p-6 shadow-lg border-primary/20">
+                      <CardContent className="p-0 flex flex-col items-center justify-center h-full">
                         <div className="absolute top-4 right-4 flex gap-2">
                           <Badge variant="secondary">{currentCard.topic}</Badge>
                           <Badge className={importanceColors[currentCard.importance]}>
@@ -155,7 +172,12 @@ export function FlashcardView({ flashcards, onNewPDF }: FlashcardViewProps) {
             </AnimatePresence>
           </div>
 
-          <div className="flex justify-between mt-6">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="flex justify-between pt-6"
+          >
             <Button
               variant="outline"
               onClick={goToPrevious}
@@ -173,67 +195,84 @@ export function FlashcardView({ flashcards, onNewPDF }: FlashcardViewProps) {
               Next
               <ChevronRight className="h-4 w-4" />
             </Button>
-          </div>
-
-          {onNewPDF && (
-            <div className="flex justify-center mt-6">
-              <Button
-                onClick={onNewPDF}
-                variant="outline"
-                className="w-full sm:w-auto py-6 gap-3 border-primary/20 hover:bg-primary/5"
-              >
-                Try Another PDF
-              </Button>
-            </div>
-          )}
+          </motion.div>
         </CardContent>
       </Card>
 
       <AnimatePresence>
         {showCompletion && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4 z-50"
           >
-            <Card className="w-full max-w-md relative">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute right-4 top-4 text-muted-foreground hover:text-foreground"
-                onClick={resetFlashcards}
-              >
-                <X className="h-5 w-5" />
-              </Button>
-              <CardHeader className="text-center space-y-2">
-                <Trophy className="h-12 w-12 text-primary mx-auto" />
-                <CardTitle className="text-2xl">Congratulations!</CardTitle>
-              </CardHeader>
-              <CardContent className="text-center space-y-4">
-                <p>You&apos;ve completed all the flashcards!</p>
-                <p className="text-muted-foreground">
-                  You&apos;ve reviewed {flashcards.length} cards
-                </p>
-                <div className="flex justify-center gap-4 pt-4">
-                  <Button
-                    variant="outline"
-                    onClick={resetFlashcards}
-                    className="px-6 py-4"
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ type: "spring", damping: 20 }}
+            >
+              <Card className="w-full max-w-md relative">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-4 top-4 text-muted-foreground hover:text-foreground"
+                  onClick={resetFlashcards}
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+                <CardHeader className="text-center space-y-2">
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
                   >
-                    Review Again
-                  </Button>
-                  {onNewPDF && (
-                    <Button onClick={onNewPDF} className="px-6 py-4">
-                      Try Another PDF
+                    <Trophy className="h-12 w-12 text-primary mx-auto" />
+                  </motion.div>
+                  <CardTitle className="text-2xl">Congratulations!</CardTitle>
+                </CardHeader>
+                <CardContent className="text-center space-y-4">
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    You&apos;ve completed all the flashcards!
+                  </motion.p>
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="text-muted-foreground"
+                  >
+                    You&apos;ve reviewed {flashcards.length} cards
+                  </motion.p>
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                    className="flex justify-center gap-4 pt-4"
+                  >
+                    <Button
+                      variant="outline"
+                      onClick={resetFlashcards}
+                      className="px-6 py-4"
+                    >
+                      Review Again
                     </Button>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+                    {onNewPDF && (
+                      <Button onClick={onNewPDF} className="px-6 py-4">
+                        Try Another PDF
+                      </Button>
+                    )}
+                  </motion.div>
+                </CardContent>
+              </Card>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 } 

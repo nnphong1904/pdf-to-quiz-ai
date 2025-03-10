@@ -134,7 +134,7 @@ export default function ChatWithFiles() {
 
         {/* Main Content */}
         <div className="flex-1 overflow-auto">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+          <div className="mx-auto px-4 sm:px-6 lg:px-8 pt-6 max-w-7xl">
             {viewMode === 'quiz' && <Quiz quiz={quiz} clearPDF={clearPDF} />}
             {viewMode === 'flashcards' && <FlashcardView flashcards={flashcards.flashcards} onNewPDF={clearPDF} />}
             {viewMode === 'match' && <MatchingGame pairs={match.pairs} onNewPDF={clearPDF} />}

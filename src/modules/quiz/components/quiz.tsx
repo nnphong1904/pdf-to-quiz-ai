@@ -181,7 +181,7 @@ export function Quiz({ quiz, clearPDF }: QuizProps) {
             exit={{ opacity: 0, y: -20 }}
             className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4 z-50"
           >
-            <Card className="w-full max-w-4xl relative">
+            <Card className="w-full relative">
               <Button
                 variant="ghost"
                 size="icon"
