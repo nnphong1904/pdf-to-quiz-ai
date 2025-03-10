@@ -2,7 +2,7 @@ import { fullMatchSchema } from "@/modules/quiz/schemas";
 import { googleGemini } from "@/lib/model";
 import { streamObject } from "ai";
 
-export const maxDuration = 300; // 5 minutes for comprehensive processing
+export const maxDuration = 60; // 5 minutes for comprehensive processing
 
 export async function POST(req: Request) {
   const { files } = await req.json();
