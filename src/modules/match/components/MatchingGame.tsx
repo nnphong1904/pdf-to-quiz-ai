@@ -29,6 +29,8 @@ export function MatchingGame({ pairs, onNewPDF }: MatchingGameProps) {
   const [moves, setMoves] = useState(0);
   const [gameComplete, setGameComplete] = useState(false);
 
+  const [matched, setIsMatched] = useState(false);
+
   // Initialize game
   useEffect(() => {
     const gameCards: MatchCard[] = pairs.flatMap((pair, index) => [
@@ -57,15 +59,9 @@ export function MatchingGame({ pairs, onNewPDF }: MatchingGameProps) {
   }, [pairs]);
 
   const handleCardClick = (cardId: number) => {
-
     const card = Object.values(cards).find((card) => card.id === cardId);
 
-    if (
-      isChecking ||
-      card?.isMatched ||
-      selectedCards.includes(cardId)
-    ) {
-      console.log("🚀 ~ handleCardClick ~ cardId:", cardId)
+    if (isChecking || card?.isMatched || selectedCards.includes(cardId)) {
       return;
     }
 
@@ -78,27 +74,22 @@ export function MatchingGame({ pairs, onNewPDF }: MatchingGameProps) {
       setMoves((prev) => prev + 1);
 
       const [firstCard, secondCard] = newSelectedCards.map((id) => cards[id]);
-      console.log("🚀 ~ handleCardClick ~ secondCard:", secondCard)
-      console.log("🚀 ~ handleCardClick ~ firstCard:", firstCard)
       const isMatch = firstCard.originalIndex === secondCard.originalIndex;
 
-      setTimeout(() => {
-        if (isMatch) {
-          // Mark cards as matched
-          setCards((prev) =>
-            prev.map((card) =>
-              newSelectedCards.includes(card.id)
-                ? { ...card, isMatched: true }
-                : card
-            )
-          );
-          setMatchedPairs((prev) => prev + 1);
+      if (isMatch) {
+        setCards((prev) =>
+          prev.map((card) =>
+            newSelectedCards.includes(card.id)
+              ? { ...card, isMatched: true }
+              : card
+          )
+        );
+        setMatchedPairs((prev) => prev + 1);
+        setIsMatched(true);
+      }
 
-          // Check if game is complete
-          if (matchedPairs + 1 === pairs.length) {
-            setGameComplete(true);
-          }
-        }
+      setTimeout(() => {
+        setIsMatched(false);
         setSelectedCards([]);
         setIsChecking(false);
       }, 1000);
@@ -129,47 +120,56 @@ export function MatchingGame({ pairs, onNewPDF }: MatchingGameProps) {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <AnimatePresence mode="wait">
-              {cards.map((card) => (
-                <motion.div
-                  key={card.id}
-                  initial={{ scale: 1 }}
-                  // animate={{
-                  //   scale: card.isMatched ? 0 : 1,
-                  // }}
-                  exit={{ scale: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className={cn(
-                    "cursor-pointer",
-                    card.isMatched && "pointer-events-none"
-                  )}
-                  onClick={() => handleCardClick(card.id)}
-                >
-                  <Card
+              {cards.map((card) => {
+                const isSelected = selectedCards.includes(card.id);
+
+                const isNotSelected = !selectedCards.includes(card.id);
+
+                const isMatched =
+                  selectedCards.length === 2 &&
+                  matched &&
+                  selectedCards.includes(card.id);
+                const isNotMatched =
+                  selectedCards.length === 2 &&
+                  !matched &&
+                  selectedCards.includes(card.id);
+
+                return (
+                  <motion.div
+                    key={card.id}
+                    initial={{ scale: 1 }}
+                    animate={{
+                      scale: card.isMatched ? 0 : 1,
+                    }}
+                    exit={{ scale: 0 }}
+                    transition={{ duration: 0.3 }}
                     className={cn(
-                      "w-full h-[250px] border-[3px] transition-colors overflow-hidden",
-                      card.isMatched && "border-green-500 bg-green-50/50",
-                      selectedCards.includes(card.id) && !card.isMatched &&
-                        "border-primary bg-primary/5",
-                      selectedCards.length === 2 &&
-                        selectedCards.includes(card.id) &&
-                        !cards[selectedCards[0]].isMatched &&
-                        !card.isMatched &&
-                        "border-red-500 animate-shake",
-                      !selectedCards.includes(card.id) &&
-                        !card.isMatched &&
-                        "border-muted-foreground/20 hover:border-primary/50"
+                      "cursor-pointer",
+                      card.isMatched && "pointer-events-none"
                     )}
+                    onClick={() => handleCardClick(card.id)}
                   >
-                    <CardContent className="p-6 flex flex-col justify-between h-full">
-                      <div className="flex flex-col items-center justify-center h-full w-full">
-                        <p className="text-base text-center break-words w-full max-h-full overflow-y-auto">
-                          {card.content}
-                        </p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
+                    <Card
+                      className={cn(
+                        "w-full h-[250px] border-[3px] transition-colors overflow-hidden",
+                        isSelected && "border-primary bg-primary/5",
+                        isMatched && "border-green-500 bg-green-50/50",
+                        isNotMatched && "border-red-500 animate-shake",
+                        isNotSelected &&
+                          "border-muted-foreground/20 hover:border-primary/50"
+                      )}
+                    >
+                      <CardContent className="p-6 flex flex-col justify-between h-full">
+                        <div className="flex flex-col items-center justify-center h-full w-full">
+                          <p className="text-base text-center break-words w-full max-h-full overflow-y-auto">
+                            {card.content}
+                          </p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                );
+              })}
             </AnimatePresence>
           </div>
 
