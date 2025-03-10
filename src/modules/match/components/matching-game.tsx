@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Trophy } from "lucide-react";
 import { type MatchPair } from "@/modules/quiz/schemas";
-import { MatchBox, type MatchCard } from "./MatchBox";
+import { MatchBox, type MatchCard } from "./match-box";
 import { motion } from "framer-motion";
 
 interface MatchingGameProps {

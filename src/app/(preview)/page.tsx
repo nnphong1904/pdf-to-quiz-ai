@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Quiz } from "@/modules/quiz/components/quiz";
 import { FlashcardView } from "@/modules/flashcards/components/FlashcardView";
-import { MatchingGame } from "@/modules/match/components/MatchingGame";
+import { MatchingGame } from "@/modules/match/components/matching-game";
 import { generateQuizTitle } from "./actions";
 import { AnimatePresence, motion } from "framer-motion";
 import { useQuizAndFlashcards } from "@/modules/quiz/hooks/useQuizAndFlashcards";
