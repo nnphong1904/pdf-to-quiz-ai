@@ -53,6 +53,9 @@ DO NOT include any time estimates or time-related information in the quiz.`,
     ],
     schema: fullQuizSchema,
     output: "object",
+    onError: (error) => {
+      console.error("🚀 ~ POST ~ error:", error)
+    },
     onFinish: ({ object }) => {
       const res = fullQuizSchema.safeParse(object);
       if (res.error) {

@@ -45,6 +45,9 @@ Your goal is to create flashcards that help users effectively memorize and under
     ],
     schema: fullFlashcardsSchema,
     output: "object",
+    onError: (error) => {
+      console.error("🚀 ~ POST ~ error:", error)
+    },
     onFinish: ({ object }) => {
       const res = fullFlashcardsSchema.safeParse(object);
       if (res.error) {
