@@ -85,11 +85,11 @@ export function useLearningMaterials() {
   }, [submitQuiz, submitFlashcards, submitMatch]);
 
   const clearContent = useCallback(() => {
-    submitQuiz(undefined);
-    submitFlashcards(undefined);
-    submitMatch(undefined);
+    setQuiz(null);  
+    setFlashcards(null);
+    setMatch(null);
     setError(null);
-  }, [submitQuiz, submitFlashcards, submitMatch]);
+  }, []);
 
   return {
     quiz,

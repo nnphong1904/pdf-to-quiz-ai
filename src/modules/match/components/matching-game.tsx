@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Trophy, X } from "lucide-react";
 import { type MatchPair } from "@/modules/quiz/schemas";
 import { MatchBox, type MatchCard } from "./match-box";
+import ReactConfetti from "react-confetti";
 
 interface MatchingGameProps {
   pairs: MatchPair[];
@@ -22,6 +23,7 @@ export function MatchingGame({ pairs, onNewPDF }: MatchingGameProps) {
   const [moves, setMoves] = useState(0);
   const [gameComplete, setGameComplete] = useState(false);
   const [matched, setIsMatched] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   // Initialize game
   useEffect(() => {
@@ -48,6 +50,7 @@ export function MatchingGame({ pairs, onNewPDF }: MatchingGameProps) {
     setMatchedPairs(0);
     setMoves(0);
     setGameComplete(false);
+    setShowConfetti(false);
   }, [pairs]);
 
   const handleCardClick = (cardId: number) => {
@@ -82,6 +85,9 @@ export function MatchingGame({ pairs, onNewPDF }: MatchingGameProps) {
         // Check if game is complete
         if (matchedPairs + 1 === pairs.length) {
           setGameComplete(true);
+          setShowConfetti(true);
+          // Hide confetti after 5 seconds
+          setTimeout(() => setShowConfetti(false), 5000);
         }
       }
 
@@ -103,6 +109,7 @@ export function MatchingGame({ pairs, onNewPDF }: MatchingGameProps) {
     setMatchedPairs(0);
     setMoves(0);
     setGameComplete(false);
+    setShowConfetti(false);
   };
 
   return (
@@ -111,6 +118,17 @@ export function MatchingGame({ pairs, onNewPDF }: MatchingGameProps) {
       animate={{ opacity: 1, y: 0 }}
       className="w-full mx-auto py-8 px-4"
     >
+      {showConfetti && (
+        <div className="fixed inset-0 z-[60] pointer-events-none">
+          <ReactConfetti
+            width={window.innerWidth}
+            height={window.innerHeight}
+            recycle={false}
+            numberOfPieces={500}
+            gravity={0.2}
+          />
+        </div>
+      )}
       <Card className="w-full border-primary/20 shadow-lg overflow-hidden">
         <CardContent className="p-6 space-y-6">
           <motion.div 

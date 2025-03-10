@@ -7,6 +7,7 @@ import QuizReview from "./quiz-overview";
 import { FullQuiz } from "@/modules/quiz/schemas";
 import { QuestionCard } from "./questions-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import ReactConfetti from "react-confetti";
 
 type QuizProps = {
   quiz: FullQuiz;
@@ -23,6 +24,7 @@ export function Quiz({ quiz, clearPDF }: QuizProps) {
   const [score, setScore] = useState<number | null>(null);
   const [progress, setProgress] = useState(0);
   const [showReview, setShowReview] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -59,6 +61,8 @@ export function Quiz({ quiz, clearPDF }: QuizProps) {
       return acc + (question.answer === answers[index] ? 1 : 0);
     }, 0);
     setScore(correctAnswers);
+    setShowConfetti(true);
+    setTimeout(() => setShowConfetti(false), 5000);
   };
 
   const handleReset = () => {
@@ -68,6 +72,7 @@ export function Quiz({ quiz, clearPDF }: QuizProps) {
     setScore(null);
     setProgress(0);
     setShowReview(false);
+    setShowConfetti(false);
   };
 
   const handleReview = () => {
@@ -86,6 +91,17 @@ export function Quiz({ quiz, clearPDF }: QuizProps) {
 
   return (
     <div className="py-4 sm:px-4 min-h-[calc(100vh-8rem)] flex flex-col">
+      {showConfetti && (
+        <div className="fixed inset-0 z-[60] pointer-events-none">
+          <ReactConfetti
+            width={window.innerWidth}
+            height={window.innerHeight}
+            recycle={false}
+            numberOfPieces={500}
+            gravity={0.2}
+          />
+        </div>
+      )}
       <div className="flex justify-between items-center mb-3 text-sm sm:text-base">
         <span className="font-medium">
           Question {currentQuestionIndex + 1} of {questions.length}

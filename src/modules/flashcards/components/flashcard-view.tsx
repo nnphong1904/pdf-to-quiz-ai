@@ -8,6 +8,7 @@ import { ChevronLeft, ChevronRight, Trophy, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { type FullFlashcards } from '@/modules/quiz/schemas';
 import { cn } from '@/lib/utils';
+import ReactConfetti from 'react-confetti';
 
 interface FlashcardViewProps {
   flashcards: FullFlashcards['flashcards'];
@@ -19,6 +20,7 @@ export function FlashcardView({ flashcards, onNewPDF }: FlashcardViewProps) {
   const [isFlipped, setIsFlipped] = useState(false);
   const [progress, setProgress] = useState(0);
   const [showCompletion, setShowCompletion] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   const currentCard = flashcards[currentIndex];
 
@@ -29,9 +31,12 @@ export function FlashcardView({ flashcards, onNewPDF }: FlashcardViewProps) {
       const newProgress = ((nextIndex + 1) / flashcards.length) * 100;
       setProgress(newProgress);
       
-      // Show completion popup when reaching 100%
+      // Show completion popup and confetti when reaching 100%
       if (newProgress === 100) {
         setShowCompletion(true);
+        setShowConfetti(true);
+        // Hide confetti after 5 seconds
+        setTimeout(() => setShowConfetti(false), 5000);
       }
       
       return nextIndex;
@@ -52,6 +57,7 @@ export function FlashcardView({ flashcards, onNewPDF }: FlashcardViewProps) {
     setProgress(0);
     setIsFlipped(false);
     setShowCompletion(false);
+    setShowConfetti(false);
   };
 
   const importanceColors = {
@@ -62,6 +68,17 @@ export function FlashcardView({ flashcards, onNewPDF }: FlashcardViewProps) {
 
   return (
     <div className="w-full max-w-4xl mx-auto py-8 px-4">
+      {showConfetti && (
+        <div className="fixed inset-0 z-[60] pointer-events-none">
+          <ReactConfetti
+            width={window.innerWidth}
+            height={window.innerHeight}
+            recycle={false}
+            numberOfPieces={500}
+            gravity={0.2}
+          />
+        </div>
+      )}
       <Card className="w-full border-primary/20 shadow-lg">
         <CardContent className="p-6 space-y-6">
           <div className="flex justify-between items-center text-sm">
