@@ -54,24 +54,13 @@ export function useLearningMaterials() {
     },
   });
 
-  const generateContent = useCallback(async (files: File[]) => {
+  const generateContent = useCallback(async (fileUrl: string) => {
     try {
-
-      const fileData = await Promise.all(
-        files.map(async (file) => ({
-          name: file.name,
-          type: file.type,
-          data: await file.arrayBuffer().then((buf) =>
-            Buffer.from(buf).toString('base64')
-          ),
-        }))
-      );
-
       // Generate quiz, flashcards, and match data in parallel
       await Promise.all([
-        submitQuiz({ files: fileData }),
-        submitFlashcards({ files: fileData }),
-        submitMatch({ files: fileData }),
+        submitQuiz({ fileUrl }),
+        submitFlashcards({ fileUrl }),
+        submitMatch({ fileUrl }),
       ]);
     } catch {
       toast.error('Failed to process files. Please try again.');

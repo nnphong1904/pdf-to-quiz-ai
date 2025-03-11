@@ -2,7 +2,15 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { FileUp, Plus, Loader2, BookOpen, Brain, Sparkles, ArrowLeft } from "lucide-react";
+import {
+  FileUp,
+  Plus,
+  Loader2,
+  BookOpen,
+  Brain,
+  Sparkles,
+  ArrowLeft,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,12 +27,13 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useLearningMaterials } from "@/app/(preview)/_hooks/use-learning-materials";
 import { cn } from "@/lib/utils";
 
-type ViewMode = 'quiz' | 'flashcards' | 'match';
+type ViewMode = "quiz" | "flashcards" | "match";
 
 export default function ChatWithFiles() {
   const [files, setFiles] = useState<File[]>([]);
   const [isDragging, setIsDragging] = useState(false);
-  const [viewMode, setViewMode] = useState<ViewMode>('quiz');
+  const [isUploading, setIsUploading] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>("quiz");
 
   const {
     quiz,
@@ -47,7 +56,7 @@ export default function ChatWithFiles() {
 
     const selectedFiles = Array.from(e.target.files || []);
     const validFiles = selectedFiles.filter(
-      (file) => file.type === "application/pdf" && file.size <= 4.5 * 1024 * 1024
+      (file) => file.type === "application/pdf"
     );
 
     if (validFiles.length !== selectedFiles.length) {
@@ -57,19 +66,51 @@ export default function ChatWithFiles() {
     setFiles(validFiles);
   };
 
+  const handleUpload = async (file: File) => {
+    try {
+      setIsUploading(true);
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const uploadResponse = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error("Failed to upload file");
+      }
+
+      const { url: fileUrl } = await uploadResponse.json();
+      return fileUrl;
+    } catch (error) {
+      toast.error("Failed to upload file");
+      throw error;
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const handleSubmitWithFiles = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     if (files.length === 0) {
+      toast.error("Please upload a PDF file.");
       return;
     }
-    e.preventDefault();
-    generateContent(files);
+
+    const formData = new FormData();
+    formData.append("file", files[0]);
+
+    const fileUrl = await handleUpload(files[0]);
+
+    generateContent(fileUrl);
     await generateQuizTitle(files[0].name);
   };
 
   const clearPDF = () => {
     setFiles([]);
     clearContent();
-    setViewMode('quiz');
+    setViewMode("quiz");
   };
 
   if (quiz && flashcards && match) {
@@ -88,13 +129,16 @@ export default function ChatWithFiles() {
           </Button>
 
           <div className="flex flex-row sm:flex-col gap-2 flex-1">
-            <div className="text-sm font-medium text-muted-foreground mb-0 sm:mb-3 hidden sm:block">View Mode</div>
+            <div className="text-sm font-medium text-muted-foreground mb-0 sm:mb-3 hidden sm:block">
+              View Mode
+            </div>
             <Button
               variant="ghost"
-              onClick={() => setViewMode('quiz')}
+              onClick={() => setViewMode("quiz")}
               className={cn(
                 "justify-start gap-2 flex-1 sm:flex-none",
-                viewMode === 'quiz' && "bg-primary/10 text-primary hover:bg-primary/20"
+                viewMode === "quiz" &&
+                  "bg-primary/10 text-primary hover:bg-primary/20"
               )}
             >
               <Brain className="h-4 w-4" />
@@ -102,10 +146,11 @@ export default function ChatWithFiles() {
             </Button>
             <Button
               variant="ghost"
-              onClick={() => setViewMode('flashcards')}
+              onClick={() => setViewMode("flashcards")}
               className={cn(
                 "justify-start gap-2 flex-1 sm:flex-none",
-                viewMode === 'flashcards' && "bg-primary/10 text-primary hover:bg-primary/20"
+                viewMode === "flashcards" &&
+                  "bg-primary/10 text-primary hover:bg-primary/20"
               )}
             >
               <BookOpen className="h-4 w-4" />
@@ -113,10 +158,11 @@ export default function ChatWithFiles() {
             </Button>
             <Button
               variant="ghost"
-              onClick={() => setViewMode('match')}
+              onClick={() => setViewMode("match")}
               className={cn(
                 "justify-start gap-2 flex-1 sm:flex-none",
-                viewMode === 'match' && "bg-primary/10 text-primary hover:bg-primary/20"
+                viewMode === "match" &&
+                  "bg-primary/10 text-primary hover:bg-primary/20"
               )}
             >
               <Sparkles className="h-4 w-4" />
@@ -128,9 +174,16 @@ export default function ChatWithFiles() {
         {/* Main Content - Add padding bottom on mobile for the bottom bar */}
         <div className="flex-1 overflow-auto pb-24 sm:pb-0">
           <div className="mx-auto px-4 sm:px-6 lg:px-8 pt-6 max-w-7xl">
-            {viewMode === 'quiz' && <Quiz quiz={quiz} clearPDF={clearPDF} />}
-            {viewMode === 'flashcards' && <FlashcardView flashcards={flashcards.flashcards} onNewPDF={clearPDF} />}
-            {viewMode === 'match' && <MatchingGame pairs={match.pairs} onNewPDF={clearPDF} />}
+            {viewMode === "quiz" && <Quiz quiz={quiz} clearPDF={clearPDF} />}
+            {viewMode === "flashcards" && (
+              <FlashcardView
+                flashcards={flashcards.flashcards}
+                onNewPDF={clearPDF}
+              />
+            )}
+            {viewMode === "match" && (
+              <MatchingGame pairs={match.pairs} onNewPDF={clearPDF} />
+            )}
           </div>
         </div>
       </div>
@@ -167,9 +220,9 @@ export default function ChatWithFiles() {
               <FileUp className="h-12 w-12 text-primary" />
             </div>
             <div className="text-xl font-medium">Drop your PDF here</div>
-            <div className="text-sm text-muted-foreground">
+            {/* <div className="text-sm text-muted-foreground">
               PDF files up to 5MB are supported
-            </div>
+            </div> */}
           </motion.div>
         )}
       </AnimatePresence>
@@ -187,8 +240,8 @@ export default function ChatWithFiles() {
           <span>PDF Learning Tools</span>
         </div>
         <p className="text-base text-muted-foreground max-w-xl mx-auto px-4">
-          Turn any PDF into interactive learning tools: quiz, flashcards, and matching game.
-          Upload your document to get started.
+          Turn any PDF into interactive learning tools: quiz, flashcards, and
+          matching game. Upload your document to get started.
         </p>
       </motion.div>
 
@@ -210,7 +263,8 @@ export default function ChatWithFiles() {
           <div className="space-y-1.5">
             <CardTitle className="text-xl">Create Learning Materials</CardTitle>
             <p className="text-sm text-muted-foreground">
-              Upload a PDF to generate an interactive quiz, flashcards, and matching game
+              Upload a PDF to generate an interactive quiz, flashcards, and
+              matching game
             </p>
           </div>
         </CardHeader>
@@ -250,9 +304,9 @@ export default function ChatWithFiles() {
             <Button
               type="submit"
               className="w-full py-5 text-base font-medium bg-primary hover:bg-primary/90"
-              disabled={files.length === 0 || isGenerating}
+              disabled={files.length === 0 || isGenerating || isUploading}
             >
-              {isGenerating ? (
+              {(isGenerating || isUploading) ? (
                 <span className="flex items-center gap-2">
                   <Loader2 className="h-4 w-4 animate-spin" />
                   <span>Generating Content...</span>
@@ -264,11 +318,20 @@ export default function ChatWithFiles() {
           </form>
         </CardContent>
         <AnimatePresence>
-          {isGenerating && (
+          {(isGenerating || isUploading) && (
             <motion.div
               initial={{ opacity: 0, height: 0, y: -20 }}
-              animate={{ opacity: 1, height: "auto", y: 0, transition: { opacity: { duration: 0.5 } } }}
-              exit={{ opacity: 0, height: 0, transition: { opacity: { duration: 0.1 } } }}
+              animate={{
+                opacity: 1,
+                height: "auto",
+                y: 0,
+                transition: { opacity: { duration: 0.5 } },
+              }}
+              exit={{
+                opacity: 0,
+                height: 0,
+                transition: { opacity: { duration: 0.1 } },
+              }}
               transition={{ duration: 0.2 }}
             >
               <CardFooter className="flex flex-col space-y-4 pt-0 pb-6 px-6">

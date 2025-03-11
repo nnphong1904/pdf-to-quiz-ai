@@ -6,8 +6,29 @@ import { googleGemini } from "@/lib/model";
 export const maxDuration = 60; // 5 minutes for comprehensive processing
 
 export async function POST(req: Request) {
-  const { files } = await req.json();
-  const firstFile = files[0].data;
+  const { fileUrl } = await req.json();
+  
+  if (!fileUrl) {
+    return new Response(JSON.stringify({ error: "No file URL provided" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  // Fetch the file from the URL
+  const fileResponse = await fetch(fileUrl);
+  if (!fileResponse.ok) {
+    return new Response(JSON.stringify({ error: "Failed to fetch file" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  // Get the file as a blob
+  const fileBlob = await fileResponse.blob();
+  // Convert blob to base64
+  const fileArrayBuffer = await fileBlob.arrayBuffer();
+  const fileBase64 = Buffer.from(fileArrayBuffer).toString('base64');
 
   const result = streamObject({
     model: googleGemini,
@@ -43,7 +64,7 @@ Your goal is to create a quiz that effectively tests understanding of the docume
           },
           {
             type: "file",
-            data: firstFile,
+            data: fileBase64,
             mimeType: "application/pdf",
           },
         ],
