@@ -55,12 +55,25 @@ export default function ChatWithFiles() {
     }
 
     const selectedFiles = Array.from(e.target.files || []);
-    const validFiles = selectedFiles.filter(
-      (file) => file.type === "application/pdf"
-    );
+    
+    // Check file type and size
+    const validFiles = selectedFiles.filter((file) => {
+      if (file.type !== "application/pdf") {
+        toast.error("Only PDF files are allowed.");
+        return false;
+      }
+      
+      // Check if file size is under 10MB (10 * 1024 * 1024 bytes)
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error("File size must be under 10MB.");
+        return false;
+      }
+      
+      return true;
+    });
 
     if (validFiles.length !== selectedFiles.length) {
-      toast.error("Only PDF files under 4.5MB are allowed.");
+      return;
     }
 
     setFiles(validFiles);
@@ -220,9 +233,9 @@ export default function ChatWithFiles() {
               <FileUp className="h-12 w-12 text-primary" />
             </div>
             <div className="text-xl font-medium">Drop your PDF here</div>
-            {/* <div className="text-sm text-muted-foreground">
-              PDF files up to 5MB are supported
-            </div> */}
+            <div className="text-sm text-muted-foreground">
+              PDF files up to 10MB are supported
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -298,7 +311,7 @@ export default function ChatWithFiles() {
                 )}
               </p>
               <p className="text-sm text-muted-foreground mt-1">
-                PDF files up to 5MB are supported
+                PDF files up to 10MB are supported
               </p>
             </div>
             <Button
