@@ -181,11 +181,11 @@ export function Quiz({ quiz, clearPDF }: QuizProps) {
             exit={{ opacity: 0, y: -20 }}
             className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4 z-50"
           >
-            <Card className="w-full relative">
+            <Card className="w-full max-w-2xl max-h-[90vh] relative overflow-hidden flex flex-col">
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute right-4 top-4 text-muted-foreground hover:text-foreground"
+                className="absolute right-4 top-4 text-muted-foreground hover:text-foreground z-10"
                 onClick={handleReset}
               >
                 <X className="h-5 w-5" />
@@ -194,7 +194,7 @@ export function Quiz({ quiz, clearPDF }: QuizProps) {
                 <Trophy className="h-12 w-12 text-primary mx-auto" />
                 <CardTitle className="text-2xl">Quiz Complete!</CardTitle>
               </CardHeader>
-              <CardContent className="p-6">
+              <CardContent className="p-6 overflow-y-auto">
                 {!showReview ? (
                   <QuizScore
                     correctAnswers={score}
