@@ -4,7 +4,6 @@ import { type FullQuiz, type FullFlashcards, type FullMatch, fullQuizSchema, ful
 import { toast } from 'sonner';
 
 export function useLearningMaterials() {
-  const [error, setError] = useState<string | null>(null);
 
   const [quiz, setQuiz] = useState<FullQuiz | null>(null);
   const [flashcards, setFlashcards] = useState<FullFlashcards | null>(null);
@@ -17,8 +16,7 @@ export function useLearningMaterials() {
     api: "/api/generate-quiz",
     schema: fullQuizSchema,
     initialValue: undefined,
-    onError: (err) => {
-      setError('Failed to generate quiz: ' + err.message);
+    onError: () => {
       toast.error('Failed to generate quiz. Please try again.');
     },
     onFinish: (params) => {
@@ -33,8 +31,7 @@ export function useLearningMaterials() {
     api: "/api/generate-flashcards",
     schema: fullFlashcardsSchema,
     initialValue: undefined,
-    onError: (err) => {
-      setError('Failed to generate flashcards: ' + err.message);
+    onError: () => {
       toast.error('Failed to generate flashcards. Please try again.');
     },
     onFinish: (params) => {
@@ -49,8 +46,7 @@ export function useLearningMaterials() {
     api: "/api/generate-match",
     schema: fullMatchSchema,
     initialValue: undefined,
-    onError: (err) => {
-      setError('Failed to generate match data: ' + err.message);
+    onError: () => {
       toast.error('Failed to generate match data. Please try again.');
     },
     onFinish: (params) => {
@@ -60,7 +56,6 @@ export function useLearningMaterials() {
 
   const generateContent = useCallback(async (files: File[]) => {
     try {
-      setError(null);
 
       const fileData = await Promise.all(
         files.map(async (file) => ({
@@ -78,8 +73,7 @@ export function useLearningMaterials() {
         submitFlashcards({ files: fileData }),
         submitMatch({ files: fileData }),
       ]);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+    } catch {
       toast.error('Failed to process files. Please try again.');
     }
   }, [submitQuiz, submitFlashcards, submitMatch]);
@@ -88,7 +82,6 @@ export function useLearningMaterials() {
     setQuiz(null);  
     setFlashcards(null);
     setMatch(null);
-    setError(null);
   }, []);
 
   return {
@@ -96,7 +89,6 @@ export function useLearningMaterials() {
     flashcards,
     match,
     isGenerating: isGeneratingQuiz || isGeneratingFlashcards || isGeneratingMatch,
-    error,
     generateContent,
     clearContent,
   };

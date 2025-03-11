@@ -31,7 +31,6 @@ export default function ChatWithFiles() {
     flashcards,
     match,
     isGenerating,
-    error,
     generateContent,
     clearContent,
   } = useLearningMaterials();
@@ -72,11 +71,6 @@ export default function ChatWithFiles() {
     clearContent();
     setViewMode('quiz');
   };
-
-  // Show error toast if there's an error
-  if (error) {
-    toast.error(error);
-  }
 
   if (quiz && flashcards && match) {
     return (
