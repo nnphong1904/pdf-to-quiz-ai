@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { experimental_useObject } from 'ai/react';
+import { experimental_useObject as useObject } from '@ai-sdk/react';
 import { type FullQuiz, type FullFlashcards, type FullMatch, fullQuizSchema, fullFlashcardsSchema, fullMatchSchema } from '@/modules/quiz/schemas';
 import { toast } from 'sonner';
 
@@ -12,7 +12,7 @@ export function useLearningMaterials() {
   const {
     submit: submitQuiz,
     isLoading: isGeneratingQuiz,
-  } = experimental_useObject({
+      } = useObject({
     api: "/api/generate-quiz",
     schema: fullQuizSchema,
     initialValue: undefined,
@@ -27,7 +27,7 @@ export function useLearningMaterials() {
   const {
     submit: submitFlashcards,
     isLoading: isGeneratingFlashcards,
-  } = experimental_useObject({
+  } = useObject({  
     api: "/api/generate-flashcards",
     schema: fullFlashcardsSchema,
     initialValue: undefined,
@@ -42,7 +42,7 @@ export function useLearningMaterials() {
   const {
     submit: submitMatch,
     isLoading: isGeneratingMatch,
-  } = experimental_useObject({
+  } = useObject({
     api: "/api/generate-match",
     schema: fullMatchSchema,
     initialValue: undefined,
