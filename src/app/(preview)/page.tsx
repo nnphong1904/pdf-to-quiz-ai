@@ -48,11 +48,11 @@ export default function ChatWithFiles() {
 
     const selectedFiles = Array.from(e.target.files || []);
     const validFiles = selectedFiles.filter(
-      (file) => file.type === "application/pdf" && file.size <= 5 * 1024 * 1024
+      (file) => file.type === "application/pdf" && file.size <= 4.5 * 1024 * 1024
     );
 
     if (validFiles.length !== selectedFiles.length) {
-      toast.error("Only PDF files under 5MB are allowed.");
+      toast.error("Only PDF files under 4.5MB are allowed.");
     }
 
     setFiles(validFiles);
