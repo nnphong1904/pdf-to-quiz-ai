@@ -1,9 +1,14 @@
 import { put } from '@vercel/blob';
 import { NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
+import { createCanvas } from 'canvas';
 
 export async function POST(request: Request) {
   try {
+    const canvas = createCanvas(100, 100);
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = 'red';
+    ctx.fillRect(0, 0, 100, 100);
     const formData = await request.formData();
     const file = formData.get('file') as File;
     
