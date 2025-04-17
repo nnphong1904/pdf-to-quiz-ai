@@ -54,7 +54,8 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
-      "canvas"
+      "canvas",
+      "sharp"
     ]
   }
 }
