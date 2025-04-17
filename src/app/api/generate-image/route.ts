@@ -43,7 +43,7 @@ export async function GET(request: Request) {
     ctx.fillText(text, width / 2, height / 2);
     
     // Add timestamp
-    ctx.font = '14px Arial, sans-serif';
+    ctx.font = '14px';
     ctx.fillStyle = '#333333';
     ctx.textAlign = 'right';
     ctx.textBaseline = 'bottom';
