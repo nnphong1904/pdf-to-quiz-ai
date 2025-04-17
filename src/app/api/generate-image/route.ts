@@ -7,19 +7,13 @@ export async function GET(request: Request) {
     const url = new URL(request.url);
     const width = parseInt(url.searchParams.get('width') || '400');
     const height = parseInt(url.searchParams.get('height') || '300');
-    const text = url.searchParams.get('text') || 'Hello, Canvas!';
-    const bgColor = url.searchParams.get('bgColor') || '#ffffff';
     const textColor = url.searchParams.get('textColor') || '#000000';
     
     // Create a canvas with the specified dimensions
     const canvas = createCanvas(width, height);
     const ctx = canvas.getContext('2d');
     
-    // Draw background
-    ctx.fillStyle = bgColor;
-    ctx.fillRect(0, 0, width, height);
-    
-    // Draw a colorful pattern
+    // Draw colorful background bands
     for (let i = 0; i < 5; i++) {
       const gradient = ctx.createLinearGradient(0, i * height / 5, width, i * height / 5);
       gradient.addColorStop(0, `hsl(${i * 60}, 100%, 50%)`);
@@ -34,20 +28,67 @@ export async function GET(request: Request) {
     ctx.lineWidth = 5;
     ctx.strokeRect(10, 10, width - 20, height - 20);
     
-    // Add text
-    const fontSize = Math.min(width, height) / 10;
-    ctx.font = `bold ${fontSize}px sans-serif`;
-    ctx.fillStyle = textColor;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(text, width / 2, height / 2);
+    // Draw a symbol in the center instead of text
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const symbolSize = Math.min(width, height) / 4;
     
-    // Add timestamp
-    ctx.font = '14px sans-serif';
+    // Draw a star shape
+    ctx.fillStyle = textColor;
+    ctx.beginPath();
+    
+    for (let i = 0; i < 5; i++) {
+      const startAngle = (Math.PI * 2 * i) / 5 - Math.PI / 2;
+      const endAngle = (Math.PI * 2 * (i + 0.5)) / 5 - Math.PI / 2;
+      
+      const outerX = centerX + symbolSize * Math.cos(startAngle);
+      const outerY = centerY + symbolSize * Math.sin(startAngle);
+      
+      const innerX = centerX + (symbolSize / 2) * Math.cos(endAngle);
+      const innerY = centerY + (symbolSize / 2) * Math.sin(endAngle);
+      
+      if (i === 0) {
+        ctx.moveTo(outerX, outerY);
+      } else {
+        ctx.lineTo(outerX, outerY);
+      }
+      
+      ctx.lineTo(innerX, innerY);
+    }
+    
+    ctx.closePath();
+    ctx.fill();
+    
+    // Draw decorative circles
+    const circleRadius = symbolSize / 6;
+    const circleDistance = symbolSize * 1.3;
+    
+    for (let i = 0; i < 4; i++) {
+      const angle = (Math.PI * 2 * i) / 4;
+      const circleX = centerX + circleDistance * Math.cos(angle);
+      const circleY = centerY + circleDistance * Math.sin(angle);
+      
+      ctx.beginPath();
+      ctx.arc(circleX, circleY, circleRadius, 0, Math.PI * 2);
+      ctx.fillStyle = `hsl(${i * 90}, 100%, 50%)`;
+      ctx.fill();
+    }
+    
+    // Add timestamp indicator as a horizontal line with varying thickness
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    
+    const lineY = height - 20;
+    const lineLength = width - 40;
+    
+    // Hour indicator (thicker)
     ctx.fillStyle = '#333333';
-    ctx.textAlign = 'right';
-    ctx.textBaseline = 'bottom';
-    ctx.fillText(`Generated: ${new Date().toISOString()}`, width - 20, height - 20);
+    ctx.fillRect(20, lineY - 6, lineLength * (hours / 24), 6);
+    
+    // Minute indicator (thinner)
+    ctx.fillStyle = '#666666';
+    ctx.fillRect(20, lineY, lineLength * (minutes / 60), 3);
     
     // Convert the canvas to a buffer
     const buffer = canvas.toBuffer('image/png');
