@@ -36,7 +36,7 @@ export async function GET(request: Request) {
     
     // Add text
     const fontSize = Math.min(width, height) / 10;
-    ctx.font = `bold ${fontSize}px Arial, sans-serif`;
+    ctx.font = `bold ${fontSize}px`;
     ctx.fillStyle = textColor;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
