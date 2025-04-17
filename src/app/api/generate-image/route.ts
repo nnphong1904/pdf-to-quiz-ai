@@ -36,14 +36,14 @@ export async function GET(request: Request) {
     
     // Add text
     const fontSize = Math.min(width, height) / 10;
-    ctx.font = `bold ${fontSize}px`;
+    ctx.font = `bold ${fontSize}px sans-serif`;
     ctx.fillStyle = textColor;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(text, width / 2, height / 2);
     
     // Add timestamp
-    ctx.font = '14px';
+    ctx.font = '14px sans-serif';
     ctx.fillStyle = '#333333';
     ctx.textAlign = 'right';
     ctx.textBaseline = 'bottom';
