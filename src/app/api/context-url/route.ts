@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { execSync } = require("child_process");
     const output = execSync(
       'ldconfig -p | grep cairo || echo "Not found"'
